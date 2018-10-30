@@ -51,7 +51,11 @@ class Telegram extends Transport
         $curl = curl_init();
         set_curl_proxy($curl);
         $text = urlencode($obj['msg']);
-        curl_setopt($curl, CURLOPT_URL, ("https://api.telegram.org/bot{$data['token']}/sendMessage?chat_id={$data['chat_id']}&text=$text"));
+        $format="";
+        if ( $data['format'] ) {
+                $format="&parse_mode=".$data['format'];
+        }
+        curl_setopt($curl, CURLOPT_URL, ("https://api.telegram.org/bot{$data['token']}/sendMessage?chat_id={$data['chat_id']}&text=$text{$format}"));
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         $ret  = curl_exec($curl);
         $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -79,11 +83,20 @@ class Telegram extends Transport
                     'name' => 'telegram-token',
                     'descr' => 'Telegram Token',
                     'type' => 'text',
+                ],
+                [
+                    'title' => 'Format',
+                    'name' => 'telegram-format',
+                    'descr' => 'Telegram format',
+                    'type' => 'text',
                 ]
+
             ],
             'validation' => [
                 'telegram-chat-id' => 'required|string',
                 'telegram-token' => 'required|string',
+                'telegram-format' => 'required|string',
+
             ]
         ];
     }
